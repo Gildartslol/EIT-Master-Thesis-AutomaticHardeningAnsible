@@ -1,0 +1,30 @@
+---
+- name: M809740 - Debian based -  autofs service
+  service:
+    name: autofs
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M809740 - RHEL based - Disable autofs service 
+  systemd:
+    name: autofs.service
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+
+- name: M809740 - List *.automount services
+  shell: 'systemctl list-unit-files --type=automount --no-legend | cut -d" " -f1'
+  register: automount_units
+
+- name: M809740 - Disable *.automount services
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+    masked: yes
+  with_items: "{{ automount_units.stdout_lines }}"
+

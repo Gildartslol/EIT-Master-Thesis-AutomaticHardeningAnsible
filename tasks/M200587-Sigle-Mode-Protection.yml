@@ -1,0 +1,24 @@
+---
+
+
+- name: M200587 - Systemd Based - Ensure that protected login is activated emergency mode
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/emergency.service
+    regexp: '^ExecStart='
+    line: ExecStart=-/lib/systemd/systemd-sulogin-shell emergency
+  when: ansible_service_mgr == "systemd"
+  
+- name: M200587 - Systemd Based - Ensure that protected mode is activated rescue mode
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/rescue.service
+    regexp: '^ExecStart='
+    line: ExecStart=-/lib/systemd/systemd-sulogin-shell rescue
+  when: ansible_service_mgr == "systemd"
+
+
+- name: M200587 - Init Based - Ensure that protected mode is activated init
+  ansible.builtin.lineinfile:
+    path: /etc/sysconfig/init
+    regexp: '^SINGLE=/sbin/sushell'
+    line: SINGLE=/sbin/sulogin
+  when: ansible_service_mgr == "upstart" or ansible_service_mgr == "sysvinit" 

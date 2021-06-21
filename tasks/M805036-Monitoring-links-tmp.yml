@@ -1,0 +1,4 @@
+---
+- name: M805036 - Report links in folder /tmp
+  template: src="M805036.sh" dest=/etc/cron.hourly/M805036.sh owner=root group=root mode=0755
+  notify: M805036 - Execute /etc/cron.hourly/M805036.sh

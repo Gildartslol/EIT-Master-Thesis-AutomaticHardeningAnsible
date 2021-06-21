@@ -1,0 +1,23 @@
+---
+- name: M812040-Create-CheckList-All
+  command: /usr/bin/find / -xdev -type f -perm /06000
+  ignore_errors: yes
+  become: true
+  register: results
+
+- debug:
+    var: results
+    verbosity: 2
+
+- name: M812040 - Copy find results to folder /var/log/M821040
+  ansible.builtin.copy:
+    content: "{{ results.stdout }}"
+    dest: /var/log/M812040_checklist.txt
+    owner: root
+    group: root
+    mode: '700'
+
+- name: M812040 - Monitoring SUID and SGID files
+  template: src="M812040.sh" dest=/etc/cron.daily/M812040.sh owner=root group=root mode=0755
+  notify: M812040 - Execute /etc/cron.daily/M812040.sh
+

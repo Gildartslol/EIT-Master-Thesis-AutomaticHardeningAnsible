@@ -1,0 +1,24 @@
+---
+
+- name: M730750 - Debian Based - Configuring common session pam umask
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-session
+    insertbefore: '# end of pam-auth-update config'
+    line: 'session optional        pam_umask.so umask={{ default_umask }}'
+    create: yes
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: M730750 - Debian Based - Setting umask
+  replace:
+    dest: "/etc/login.defs"
+    regexp: '^UMASK.*$'
+    replace: 'UMASK           {{ default_umask }}'
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name:  M730750 - RedHat Based - Setting umask
+  replace:
+    dest: "/etc/init.d/functions"
+    regexp: '^umask.*$'
+    replace: 'umask {{ default_umask }}'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+

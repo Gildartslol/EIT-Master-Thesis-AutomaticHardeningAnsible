@@ -1,0 +1,31 @@
+---
+
+- name: Reboot host and wait for it to restart
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
+
+- name: M805036 - Execute /etc/cron.hourly/M805036.sh
+  shell: /etc/cron.hourly/M805036.sh
+  become: true
+
+- name: M509730 - Execute /etc/cron.monthly/M509730.sh
+  shell: /etc/cron.monthly/M509730.sh
+  become: true
+
+- name: M812040 - Execute /etc/cron.daily/M812040.sh
+  shell: /etc/cron.daily/M812040.sh
+  become: true
+
+- name: M250305 - Reconfigure TrendMicro DeepSecurity
+  command: "{{ linux_cert_hardening_tdsagent_agent }} -r"
+  notify: M250305 - Register TrendMicro DeepSecurity
+
+- name: M250305 - Register TrendMicro DeepSecurity
+  command: "{{ linux_cert_hardening_tdsagent_agent }} -a {{ linux_cert_hardening_tdsagent_manager }} 'tenantID:{{ linux_cert_hardening_tdsagent_tenantID }}' 'tenantPassword:{{ linux_cert_hardening_tdsagent_tenantPassword }}' 'policyid:2' 'groupid:2' 'description:{{ linux_cert_hardening_tdsagent_description }}' 'displayname:{{ linux_cert_hardening_tdsagent_displayname }}'"
+
+

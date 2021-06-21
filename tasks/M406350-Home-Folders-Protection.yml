@@ -1,0 +1,78 @@
+---
+
+- name: M406350 - Gather user auditors on the machine.
+  script: files/M406350-Home-Protection.sh
+  args:
+    executable: bash
+  register: result
+
+- set_fact:
+    users: "{{ result.stdout_lines }}"
+
+- debug:
+    msg: "{{ item }}"
+    verbosity: 3
+  with_items: "{{ users }}"
+
+- name: M406350 - Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "/home/{{ item }}"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '700'
+  with_items: "{{ users }}"
+
+
+- name: M40635 0- Securing directory .ssh
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.ssh"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '700'
+    state: directory
+  with_items: "{{ users }}"
+
+- name: M406350 - Securing directoryu .netrc
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.netrc"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '600'
+    state: directory
+  with_items: "{{ users }}"
+
+- name: M406350 - Securing directoryu .telnetrc
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.telnetrc"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '600'
+    state: directory
+  with_items: "{{ users }}"
+
+- name: M406350 - Securing bash_profile
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.bash_profile"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '755'
+    state: directory
+  with_items: "{{ users }}"
+
+- name: M406350 - Securing bashrc
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.bashrc"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '755'
+    state: file
+  with_items: "{{ users }}"
+
+- name: M406350 - Securing profile
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.profile"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '755'
+    state: file
+  with_items: "{{ users }}"

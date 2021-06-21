@@ -1,0 +1,52 @@
+---
+
+- name: M604007- Debian based - Remove "apport" package
+  apt:
+    name: apport
+    state: absent
+
+- name: M604007 - Setting to /dev/null kernel.core_pattern variable
+  ansible.posix.sysctl:
+    name: kernel.core_pattern
+    value: "/dev/null"
+    state: present
+    reload: yes
+    ignoreerrors: yes
+
+- name: M604007 - Setting to 0 the  kernel.core_uses_pid variable
+  ansible.posix.sysctl:
+    name: kernel.core_uses_pid
+    value: "0"
+    state: present
+    reload: yes
+    ignoreerrors: yes
+
+
+- name:  M604007 - systemd core dumps to none
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/coredump.conf
+    line: "Storage=none"
+    create: yes
+  when: ansible_service_mgr == "systemd"
+
+- name:  M604007 - Adding configuration to /etc/security/limits.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/limits.conf
+    line: "* soft core 0"
+    create: yes
+
+- name:  M604007 - Adding configuration to /etc/security/limits.conf
+  ansible.builtin.lineinfile:
+    path: /etc/security/limits.conf
+    line: "* hard core 0"
+    create: yes
+
+
+- name:  M604007 - Disallow core dumping by setuid and setgid programs
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    line: "fs.suid_dumpable = 0"
+    create: yes
+
+
+

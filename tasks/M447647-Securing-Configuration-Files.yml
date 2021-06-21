@@ -1,0 +1,67 @@
+---
+
+- name: M447647 - Debian based - Find all config files
+  shell: find /var/lib/dpkg/info/*conffiles -type f
+  args:
+    executable: /bin/bash
+  become: true
+  register: debian_files
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+
+- name: M447647 - RHEL based - Find all config files
+  shell: rpm -qac | egrep etc | egrep -v "shadow|passwd|bashrc|shells|profile|skel|group|favicon.png|mtab"
+  args:
+    executable: /bin/bash
+  become: true
+  register: rhel_files
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+
+- name: M447647 - Debian based - Stat all config files
+  stat:
+    path: "{{ item }}"
+  register: debian_stat
+  with_items:
+    - "{{ debian_files.stdout_lines }}"
+  when : ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M447647 - RHEL based - Stat all config files
+  stat:
+    path: "{{ item }}"
+  register: rhel_stat
+  with_items:
+    - "{{ rhel_files.stdout_lines }}"
+  when : ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+
+- debug:
+   msg: Is file "{{ item.stat.isreg }}"
+   verbosity: 3
+  with_items: "{{ debian_stat.results }}"
+
+- name: M447647 - Debian based - Secure permissions
+  file:
+   path: "{{ item.stat.path }}"
+   mode: 0444
+  with_items: "{{ debian_stat.results }}"
+  when:
+    -  ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    -  item.stat.isreg
+    -  not item.stat.xgrp
+    -  not item.stat.xusr
+    -  not item.stat.xoth
+
+- name: M447647 - RHEL based - Secure permissions
+  file:
+   path: "{{ item.stat.path }}"
+   mode: 0444
+  with_items: "{{ rhel_stat.results }}"
+  when:
+    -  ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+    -  item.stat.isreg
+    -  not item.stat.xgrp
+    -  not item.stat.xusr
+    -  not item.stat.xoth
+
+

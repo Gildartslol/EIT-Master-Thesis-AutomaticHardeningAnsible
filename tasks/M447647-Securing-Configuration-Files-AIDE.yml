@@ -1,0 +1,59 @@
+---
+- name: M447647 - Debian based - Install AIDE
+  apt:
+    state: present
+    name: aide
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+
+- name: M447647 - Debian based - Install AIDE
+  yum:
+    state: present
+    name: aide
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+
+- name: M447647 - Backup file AIDE
+  ansible.builtin.copy:
+    backup: yes
+    remote_src: yes
+    src: /etc/default/aide
+    dest: "/etc/default/aide-COPY-{{ ansible_date_time.date }}"
+
+- name: M447647 - Backup AIDE directory config files
+  ansible.builtin.copy:
+    backup: yes
+    remote_src: yes
+    src: /etc/aide
+    dest: "/etc/aide-COPY-{{ ansible_date_time.date }}"
+    directory_mode: yes
+
+
+- name: M447647 -  Setup config files daily cron
+  ansible.builtin.lineinfile:
+    path: /etc/default/aide
+    regexp: "^#CRON_DAILY_RUN.*$"
+    line: "CRON_DAILY_RUN=yes"
+
+- name: M447647 -  Setup config files QUIETREPORTS
+  ansible.builtin.lineinfile:
+    path: /etc/default/aide
+    regexp: "^#QUIETREPORTS.*$"
+    line: "QUIETREPORTS=yes"
+
+- name: M447647 -  Setup config files FDQN
+  ansible.builtin.lineinfile:
+    path: /etc/default/aide
+    regexp: "^# FQDN=.*$"
+    line: "FQDN=localhost"
+
+- name: M447647 - Setup aide.conf
+  lineinfile:
+    path: /etc/aide/aide.conf
+    line: "{{lookup('file', 'aide.conf')}}"
+    create: yes 
+    state: present
+
+- name: M447647 -  Setup config files FDQN
+  command: aideinit && aide.wrapper --check
+  register: aide_output

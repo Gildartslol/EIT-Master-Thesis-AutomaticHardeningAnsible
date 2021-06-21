@@ -1,0 +1,84 @@
+---
+ #Update OS to latest security updates
+
+- name: M497003 - Update OS Now
+  include: M497003-UpdateOS.yml
+  when: M497003 == "True"
+
+- name: M497003 - Update OS automatically
+  include: M497003-AutoUpdates.yml
+  when: M497003Auto == "True"
+
+- name: M505607 - Stack protection
+  include:  M505607-Protecting-Stack.yml
+  when: M505607 == "True"
+
+- name: M447734 - Links Protection
+  include:  M447734-Links-Protection.yml
+  when: M447734 == "True"
+
+
+- name: M604007 - Disabling Core Dumps
+  include: M604007-Disable-CoreDumps.yml
+  when: M604007 == "True"
+
+- name: M200587 - Single Mode Protection
+  include: M200587-Sigle-Mode-Protection.yml
+  when: M200587 == "True"
+
+- name: M200587 - Setting umask
+  include: M730750-Setting-Umask.yml
+  when: M730750 == "True"
+
+- name: M608700 - Scheduled Service Security
+  include: M608700-Scheduled-Service-Security.yml
+  when: M608700 == "True"
+
+- name: M802906 - Protecting System files
+  include: M802906-Protecting-system-Files.yml
+  when: M802906 == "True"
+
+- name: M406350 - Protecting home directories
+  include: M406350-Home-Folders-Protection.yml
+  when: M406350 == "True"
+
+- name: M805036 - Monitoring links in temporal folder
+  include: M805036-Monitoring-links-tmp.yml
+  when: M805036 == "True"
+
+- name: M509730 - Monitoring existing users and groups
+  include: M509730-Monitoring-existing-user.yml
+  when: M509730 == "True"
+
+- name: M812040 - Monitoring SGID and SUID programs
+  include: M812040-SUID-SGID-Monitoring.yml
+  when: M812040 == "True"
+
+- name: M809740 - Autorun and automount protection
+  include:  M809740-Autorun-Automount-Protection.yml
+  when: M809740 == "True"
+
+- name: M447647 - Configuration files protection
+  include:  M447647-Securing-Configuration-Files.yml
+  when: M447647 == "True"
+
+- name: M447647 - Configuration files integrity protection
+  include:  M447647-Securing-Configuration-Files-AIDE.yml
+  when: M447647aide == "True"
+
+- name: M250305 - Malware Protection
+  include:  M250305-Malware-Protection.yml
+  when: M250305 == "True"
+
+- name: M202900 - Network firewall setup
+  include:  M202900-Network-Firewall-Setup.yml
+  when: M202900 == "True"
+
+- name: M202900 - Network psad setup
+  include:  M202900-Network-PSAD-Setup.yml
+  when: M202900psad == "True"
+
+- name: M307609 - Disable unneeded Network protocols
+  include:  M307609-Disable-unneded-network-protocols.yml
+  when: M307609 == "True"
+

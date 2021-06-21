@@ -1,0 +1,46 @@
+---
+
+- name: M497003 - Check Aptitude installation. Needed for APT.
+  ansible.builtin.apt:
+   name: aptitude
+   state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M497003 - Debian based - Update and upgrade system to latest updates.
+  become: true
+  apt:
+    upgrade: safe
+    state: latest
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+    autoclean: yes
+    autoremove: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M497003 - Debian based - Check if a reboot is needed for Debian and Ubuntu boxes.
+  stat: path=/var/run/reboot-required get_md5=no
+  register: reboot_required_file
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name:  M497003 - Debian based - Print reboot required
+  ansible.builtin.debug:
+    msg: System need to reboot ? "{{ reboot_required_file.stat.exists }}"
+  when: ansible_default_ipv4.gateway is defined
+
+- name: M497003 - RHEL based - Update and upgrade system to latest updated.
+  ansible.builtin.yum:
+    update_cache: yes
+    name: '*'
+    state: latest
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name: M497003 - Reboot required
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
+  when:  reboot_required_file.stat.exists
+

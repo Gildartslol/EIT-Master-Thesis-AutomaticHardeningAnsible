@@ -1,0 +1,40 @@
+---
+
+M497003: "False" #UpdateOS
+M497003Auto: "False" #AutomaticUpdates
+M505607: "False" #StackProtection
+M447734: "False" #Links protection
+M604007: "False" #Core Dumps
+M200587: "False" #Single mode protection
+M730750: "False" #Setting umask
+M608700: "False" #Scheduled service security
+M802906: "False" #Protecting System files
+M406350: "False" #Protecting home folders
+M805036: "False" #Monitoring tmp links
+M509730: "False" #Monitoring existing users
+M812040: "False" #SUID SGID monitoring
+M809740: "False" #Automount and autorun protection
+M447647: "False" #Securing conf files
+M447647aide: "False" #Conf files integrity check
+M250305: "False" #Malware protection
+M202900: "False" #Network firewall setup
+M202900psad: "False" #Port scan attack detector
+M307609: "True" #Disable unneeded network protocols
+
+
+default_umask: "077"
+reboot_on_update: "False"
+
+
+
+##### TrendMicro antivirus#####
+linux_cert_hardening_tdsagent_url: "https://155.45.167.84:4430/software/agent"
+linux_cert_hardening_tdsagent_url_deb: "{{linux_cert_hardening_tdsagent_url}}/Ubuntu_16.04/x86_64/"
+linux_cert_hardening_tdsagent_url_rpm: "{{linux_cert_hardening_tdsagent_url}}/RedHat_EL7/x86_64/"
+linux_cert_hardening_tdsagent_manager: "dsm://155.45.167.84:4431/"
+linux_cert_hardening_tdsagent_tenantID: "EFE94B04-1873-D753-AA12-D433DF906C25"
+linux_cert_hardening_tdsagent_tenantPassword: "7AD3F8C5-51BA-F0E3-1A07-9840FE6697BC"
+linux_cert_hardening_tdsagent_agent: "/opt/ds_agent/dsa_control"
+linux_cert_hardening_tdsagent_description: "OPS-CLOUD_ACCOUNT_ID"
+linux_cert_hardening_tdsagent_displayname: "OPS-Ansible_Generated"
+

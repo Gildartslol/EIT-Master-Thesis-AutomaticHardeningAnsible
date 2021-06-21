@@ -1,0 +1,44 @@
+---
+
+- name: M608700 - Systemd based - Find timer files for systemd
+  command: find /etc /usr -type f -user root \( -name '*.service' -o -name '*.timer' \)
+  become: true
+  register: timer_files
+  when: ansible_service_mgr == "systemd"
+
+- name: M608700 - Gathering file stats
+  stat:
+    path: "{{ item }}"
+  register: files_stat
+  with_items:
+    - "{{ timer_files.stdout_lines }}"
+
+- name: M608700 - Change permissions
+  file:
+    path: "{{ item.item }}"
+    owner: root
+    group: root
+    mode: g-w,o-w
+  with_items:
+    - "{{ files_stat.results }}"
+
+- name: M608700 - Crontab Setup
+  ansible.builtin.find:
+    paths: /etc/cron.d
+    recurse: yes
+  register: cron_files
+
+- name: M608700 - Gathering Crontab file stats
+  file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: g-w,o-w,u+w
+  with_items:
+    - "{{ cron_files.files }}"
+
+- name: M608700 - Allowing cron users
+  ansible.builtin.lineinfile:
+    path: /etc/cron.d/cron.allow
+    line: root
+    create: yes

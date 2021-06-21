@@ -1,0 +1,9 @@
+---
+
+- name: M505607 - The operating system must implement address space layout randomization to protect its memory from unauthorized code execution."
+  ansible.posix.sysctl:
+    name: kernel.randomize_va_space
+    value: "2"
+    state: present
+    reload: yes
+    ignoreerrors: yes

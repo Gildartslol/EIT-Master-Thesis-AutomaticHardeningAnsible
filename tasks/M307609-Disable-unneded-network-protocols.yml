@@ -1,0 +1,12 @@
+---
+
+- name: M307609 - Add unused protocols to blacklist
+  lineinfile:
+    dest: /etc/modprobe.d/cert-hardening-blacklist.conf
+    create: yes
+    state: present
+    line: "install {{item}} /bin/true"
+  with_items:
+    - sctp
+    - dccp
+

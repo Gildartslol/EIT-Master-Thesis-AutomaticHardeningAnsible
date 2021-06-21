@@ -1,0 +1,56 @@
+---
+- name: M202900 - Debian based - Install PSAD
+  apt:
+    name: psad
+    state: present
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: M202900 - RHEL based - Install PSAD
+  yum:
+    name: psad
+    state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name: M202900 - Change hostname in psad config file
+  ansible.builtin.lineinfile:
+    path: /etc/psad/psad.conf
+    regexp: '^HOSTNAME.*$'
+    line: HOSTNAME                    {{ ansible_hostname }};
+
+- name: M202900 - Setup psad config file
+  ansible.builtin.lineinfile:
+    path: /etc/psad/psad.conf
+    regexp: "^{{ item }}.*$"
+    line: "{{ item  }}                    Y;"
+  with_items:
+     - ENABLE_PSADWATCHD
+     - ENABLE_AUTO_IDS
+     - EXPECT_TCP_OPTIONS
+     - ENABLE_AUTO_IDS_EMAILS
+
+
+- name: M202900 - Debian based - Install wget to fetch signatures
+  apt:
+    name: wget
+    state: present
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: M202900 - RHEL based - Install wget to fetch signatures
+  yum:
+    name: wget
+    state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name: M202900 - Reloading psad
+  command: psad -R && psad --sig-update && psad -H
+
+
+- name: M202900 - Analyze with psad
+  ignore_errors: yes
+  command: psad --fw-analyze
+  register: psad_var
+
+- name:  debug
+  debug:
+    var: "{{ psad_var.stdout_lines }}"
+

@@ -1,0 +1,17 @@
+---
+
+- name: M447734 - Activating kernel variable for hardlink protection 
+  sysctl:
+   name: fs.protected_hardlinks
+   value: "1"
+   state: present
+   reload: yes
+   ignoreerrors: yes
+
+- name: M447734 - Activating kernel variable for symlinks protection
+  sysctl:
+   name: fs.protected_symlinks
+   value: "1"
+   state: present
+   reload: yes
+   ignoreerrors: yes

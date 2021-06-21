@@ -1,0 +1,4 @@
+---
+- name: M509730 - Monitoring users and groups on all files
+  template: src="M509730.sh" dest=/etc/cron.monthly/M509730.sh owner=root group=root mode=0755
+  notify: M509730 - Execute /etc/cron.monthly/M509730.sh

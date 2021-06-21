@@ -1,0 +1,54 @@
+---
+
+- name: M802906 - Find all root-owned SysV-based startup scripts
+  ansible.builtin.find:
+    paths: "{{ item }}"
+    file_type: file
+  register: systemv_files
+  with_items:
+      - /etc/rc
+      - /usr/local/etc/rc.d
+      - /etc/init.d
+      - /etc/rc?.d
+
+- name: Debug result
+  ansible.builtin.debug:
+    msg: "{{ item.path }}"
+    verbosity: 3
+  with_items: "{{ systemv_files.results | map(attribute='files') | list}}"
+
+- name: M802906 - Find all root-owned Systemd 
+  ansible.builtin.find:
+    paths: "{{ item }}"
+    file_type: file
+    recurse: yes
+    use_regex: yes
+    patterns:
+      - '^.+\.service$'
+      - '^.+\.unit$'
+  register: systemd_files
+  with_items:
+       - "/etc"
+       - "/usr"
+
+- name: Debug result
+  ansible.builtin.debug:
+    msg: "{{ item.path }}"
+    verbosity: 3
+  with_items: "{{ systemd_files.results | map(attribute='files') | list}}"
+
+- name: M802906 - Remove write permissions from group and others systemd.
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: g-w,o-w
+  with_items: "{{ systemd_files.results | map(attribute='files') | list }}"
+
+- name: M802906 - Remove write permissions from group and others systemv.
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: g-w,o-w
+  with_items: "{{ systemv_files.results | map(attribute='files') | list }}"

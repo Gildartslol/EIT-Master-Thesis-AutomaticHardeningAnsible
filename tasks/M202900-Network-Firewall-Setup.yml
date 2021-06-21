@@ -1,0 +1,73 @@
+---
+
+- name: M202900 - Debian based - Install UFW
+  apt:
+    name: ufw
+    state: present
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: M202900 - RHEL based - Install UFW
+  yum:
+    name: ufw
+    state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name: Set logging
+  community.general.ufw:
+    logging: 'on'
+
+- name:  M202900 - Deny all incoming
+  community.general.ufw:
+    policy: deny
+    direction: incoming
+
+- name:  M202900 - Deny everything outgoing
+  community.general.ufw:
+    policy: deny
+    direction: outgoing
+
+- name: M202900 - Allow SSH
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: M202900 - Allow ssh limit
+  community.general.ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+-  name:  M202900 - Allow HTTP
+   community.general.ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+-  name:  M202900 - Allow HTTPs
+   community.general.ufw:
+    rule: allow
+    port: '443'
+    proto: tcp
+
+
+- name: M202900 - Enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: M202900 - Ensure loggin tag for psad
+  ansible.builtin.blockinfile:
+    path: "{{ item }}"
+    marker_begin : "BEGIN PSAD"
+    marker_end: "END PSAD"
+    insertbefore: "^# don't delete the 'COMMIT'.*"
+    block: |
+         # log all traffic so psad can analyze
+         -A INPUT -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+         -A FORWARD -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+  with_items:
+     - /etc/ufw/before.rules
+     - /etc/ufw/before6.rules
+
+- name: M202900 - Reloads firewall
+  community.general.ufw:
+    state: reloaded

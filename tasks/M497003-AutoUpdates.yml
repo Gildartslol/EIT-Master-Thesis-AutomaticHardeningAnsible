@@ -1,0 +1,55 @@
+---
+
+- name: M497003-AutoUpdates RHEL based - Install yum-cron
+  ansible.builtin.yum:
+    name: yum-cron
+    update_cache: yes
+    state: latest
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name: M497003-AutoUpdates Debian based - Install unattended-upgrades and apt-listchanges
+  ansible.builtin.apt: 
+   name:
+     - unattended-upgrades 
+     - apt-listchanges
+     - bsd-mailx
+   state: latest
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: M497003-AutoUpdates Debian based - Activate mail root logs.
+  replace:
+    dest: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    regexp: '^\/\/Unattended-Upgrade::Mail "";$'
+    replace: 'Unattended-Upgrade::Mail "root";'
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+
+- name: M497003-AutoUpdates Debian based - Activating unattended-upgrades. Once a day
+  ansible.builtin.copy:
+   dest: "/etc/apt/apt.conf.d/20auto-upgrades"
+   content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+# RHEL Configuration
+
+- name: M497003-AutoUpdates RHEL based -  Modifying yum-cron.conf file
+  ini_file:
+    path: "/etc/yum/yum-cron.conf"
+    section: commands
+    option: update_cmd
+    value: security
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+- name:  M497003-AutoUpdates RHEL based - Enabling and starting yum-cron service
+  service:
+    name: yum-cron
+    enabled: yes
+    state: started
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+
+
