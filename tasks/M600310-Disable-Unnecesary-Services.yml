@@ -1,0 +1,15 @@
+---
+
+- name: Populate service facts
+  service_facts:
+
+- name: Stop services if started
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+    ignore_errors: yes
+  with_items:
+     - "{{ unnecesary_services_backlist }}"
+  when: item in services
+
+

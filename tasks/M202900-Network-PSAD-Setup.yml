@@ -28,7 +28,6 @@
      - EXPECT_TCP_OPTIONS
      - ENABLE_AUTO_IDS_EMAILS
 
-
 - name: M202900 - Debian based - Install wget to fetch signatures
   apt:
     name: wget

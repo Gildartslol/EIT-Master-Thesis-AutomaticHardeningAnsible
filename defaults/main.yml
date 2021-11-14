@@ -19,8 +19,10 @@ M447647aide: "False" #Conf files integrity check
 M250305: "False" #Malware protection
 M202900: "False" #Network firewall setup
 M202900psad: "False" #Port scan attack detector
-M307609: "True" #Disable unneeded network protocols
-
+M307609: "False" #Disable unneeded network protocols
+M806030: "False" #Setup accounts password complexity
+M600310: "False" # Disable unnecesary services
+M835100: "True" # Disable Secure Rsync
 
 default_umask: "077"
 reboot_on_update: "False"
@@ -37,4 +39,9 @@ linux_cert_hardening_tdsagent_tenantPassword: "7AD3F8C5-51BA-F0E3-1A07-9840FE669
 linux_cert_hardening_tdsagent_agent: "/opt/ds_agent/dsa_control"
 linux_cert_hardening_tdsagent_description: "OPS-CLOUD_ACCOUNT_ID"
 linux_cert_hardening_tdsagent_displayname: "OPS-Ansible_Generated"
+
+#M600310 Disable unnecesary services
+unnecesary_services_backlist:
+  - fptd
+  - dhcpd
 

@@ -17,7 +17,6 @@
   include:  M447734-Links-Protection.yml
   when: M447734 == "True"
 
-
 - name: M604007 - Disabling Core Dumps
   include: M604007-Disable-CoreDumps.yml
   when: M604007 == "True"
@@ -79,6 +78,21 @@
   when: M202900psad == "True"
 
 - name: M307609 - Disable unneeded Network protocols
-  include:  M307609-Disable-unneded-network-protocols.yml
+  include:  M307609-Disable-unneded-ßnetwork-protocols.yml
   when: M307609 == "True"
+
+- name: M806030 - Assigning and setting up account
+  include:  M806030-Assigning-SettingUp-Account.yml
+  when: M806030 == "True"
+
+- name: M600310 - Disable unnecesary services
+  include:  M600310-Disable-Unnecesary-Services.yml
+  when: M600310 == "True"
+
+- name: M835100 - Disable Secure Rsync
+  include:  M835100-Secure-Rsync.yml
+  when: M835100 == "True"
+
+
+ 
 

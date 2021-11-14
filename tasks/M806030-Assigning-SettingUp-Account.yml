@@ -1,0 +1,13 @@
+---
+- name: M806030 - Debian based - Install 
+  apt:
+    name: libpam-cracklib
+    state: present
+  when: ansible_facts['distribution'] == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: M806030 - Setup password complexity
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-password
+    regexp: "^password[ \t]+requisite.*"
+    line: "password required pam_cracklib.so minlen=8 lcredit=-1 ucredit=-1 dcredit=-2 ocredit=-1 difok=2 reject_username"
+ 

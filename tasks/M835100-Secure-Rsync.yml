@@ -1,0 +1,29 @@
+---
+- name: M835100 - Secure Rsync daemon (Ubuntu)
+  service:
+    name: rsync.service
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M835100 - Secure Telnet daemon (Ubuntu)
+  lineinfile:
+    dest: /etc/inetd.conf
+    regexp: '(?i)^(telnet.*)'
+    line: '# \1'
+    backrefs: yes
+    state: present
+  ignore_errors: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: M835100 - Secure Rsync and Telnet daemons (CentOS)
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  with_items:
+    - rsyncd.service
+    - telnet.socket
+  ignore_errors: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
