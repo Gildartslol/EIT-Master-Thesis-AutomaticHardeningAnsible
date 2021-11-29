@@ -1,5 +1,5 @@
 ---
-- name: M809740 - Debian based -  autofs service
+- name: M809740 - Debian based - autofs service
   service:
     name: autofs
     state: stopped

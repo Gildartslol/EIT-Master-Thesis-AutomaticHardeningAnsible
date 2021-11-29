@@ -93,6 +93,18 @@
   include:  M835100-Secure-Rsync.yml
   when: M835100 == "True"
 
+- name: M230501 - Disable Secure Rsync
+  include:  M230501-Secure-Internet-Daemon.yml
+  when: M230501 == "True"
+
+- name: M296020 - Disable Secure Rsync
+  include:  M296020-Secure-FTP-Server.yml
+  when: M296020 == "True"
+
+- name: M840320 - Disable Secure Rsync
+  include:  M840320-Securing-SNMP.yml
+  when: M840320 == "True"
+
 
  
 

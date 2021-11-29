@@ -1,0 +1,6 @@
+---
+- name: Ensure FTP anonymous mode is disabled
+  ansible.builtin.lineinfile:
+    path: /etc/vsftpd.conf
+    regexp: '^anonymous_enable='
+    line: anonymous_enable=NO

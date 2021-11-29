@@ -1,0 +1,10 @@
+---
+
+- name: Remove xined and inetd packages if existing.
+  apt:
+    name: "{{ item }}"
+    state: absent
+    purge: yes
+  with_items:
+    - xinetd
+    - inetutils-inetd

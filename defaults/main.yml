@@ -21,8 +21,11 @@ M202900: "False" #Network firewall setup
 M202900psad: "False" #Port scan attack detector
 M307609: "False" #Disable unneeded network protocols
 M806030: "False" #Setup accounts password complexity
-M600310: "False" # Disable unnecesary services
-M835100: "True" # Disable Secure Rsync
+M600310: "False" # Disable unnecesary general services
+M835100: "False" # Disable rsync
+M230501: "False" # Disable network services like xined and inetd
+M296020: "True" # Secure FTP server
+  
 
 default_umask: "077"
 reboot_on_update: "False"
@@ -30,15 +33,15 @@ reboot_on_update: "False"
 
 
 ##### TrendMicro antivirus#####
-linux_cert_hardening_tdsagent_url: "https://155.45.167.84:4430/software/agent"
+linux_cert_hardening_tdsagent_url: "https://{{SNIP}}/software/agent"
 linux_cert_hardening_tdsagent_url_deb: "{{linux_cert_hardening_tdsagent_url}}/Ubuntu_16.04/x86_64/"
 linux_cert_hardening_tdsagent_url_rpm: "{{linux_cert_hardening_tdsagent_url}}/RedHat_EL7/x86_64/"
-linux_cert_hardening_tdsagent_manager: "dsm://155.45.167.84:4431/"
-linux_cert_hardening_tdsagent_tenantID: "EFE94B04-1873-D753-AA12-D433DF906C25"
-linux_cert_hardening_tdsagent_tenantPassword: "7AD3F8C5-51BA-F0E3-1A07-9840FE6697BC"
-linux_cert_hardening_tdsagent_agent: "/opt/ds_agent/dsa_control"
-linux_cert_hardening_tdsagent_description: "OPS-CLOUD_ACCOUNT_ID"
-linux_cert_hardening_tdsagent_displayname: "OPS-Ansible_Generated"
+linux_cert_hardening_tdsagent_manager: "dsm://{{SNIP}}/"
+linux_cert_hardening_tdsagent_tenantID: "{{SNIP}}"
+linux_cert_hardening_tdsagent_tenantPassword: "{{SNIP}}"
+linux_cert_hardening_tdsagent_agent: "{{SNIP}}"
+linux_cert_hardening_tdsagent_description: "{{SNIP}}"
+linux_cert_hardening_tdsagent_displayname: "{{SNIP}}"
 
 #M600310 Disable unnecesary services
 unnecesary_services_backlist:

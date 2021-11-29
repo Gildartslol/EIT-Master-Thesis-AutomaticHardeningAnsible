@@ -1,0 +1,6 @@
+---
+- name: M840320 - Stop service SNMP
+  ansible.builtin.service:
+    name: snmpd.service
+    state: stopped
+    ignore_errors: yes  
